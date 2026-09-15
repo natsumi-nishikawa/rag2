@@ -1,0 +1,9 @@
+# 必要なライブラリのインストール
+# 主要ライブラリ
+pip install langchain langchain-community
+pip install chromadb # ベクトルDB(無料・ローカル)
+pip install sentence-transformers # Embeddingモデル(無料)
+pip install openai # OpenAI API用
+pip install langchain-google-genai # Gemini API用
+pip install pypdf # PDF読み込み用
+pip install python-dotenv # 環境変数管理
