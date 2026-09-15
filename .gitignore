@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# RAG2
+.env
+backend/uploads/
+backend/chroma_db/
