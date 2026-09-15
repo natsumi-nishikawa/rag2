@@ -27,3 +27,5 @@ dist-ssr
 .env
 backend/uploads/
 backend/chroma_db/
+__pycache__/
+*.pyc
