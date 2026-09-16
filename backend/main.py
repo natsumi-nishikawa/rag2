@@ -9,7 +9,8 @@ from pydantic import BaseModel
 from rag import (
     register_pdf,
     delete_pdf_from_db,
-    generate_answer
+    generate_answer,
+    generate_vmd_proposal
 )
 
 
@@ -41,9 +42,23 @@ os.makedirs(
 )
 
 
+# ==============================
+# 質問用データ
+# ==============================
+
 class QuestionRequest(BaseModel):
     question: str
 
+
+# ==============================
+# VMD提案用データ
+# ==============================
+
+class VmdRequest(BaseModel):
+    store: dict
+    fixedItems: list
+    movableItems: dict
+    merchandising: dict
 
 @app.get("/")
 def home():
@@ -212,3 +227,33 @@ def view_document(file_name: str):
         filename=file_name,
         content_disposition_type="inline"
     )
+
+@app.post("/vmd/propose")
+def propose_vmd(request: VmdRequest):
+
+    try:
+
+        data = {
+            "store": request.store,
+            "fixedItems": request.fixedItems,
+            "movableItems": request.movableItems,
+            "merchandising": request.merchandising,
+        }
+
+        result = generate_vmd_proposal(
+            data
+        )
+
+        return result
+
+    except Exception as error:
+
+        print(
+            "VMD提案エラー：",
+            error
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail=str(error)
+        )

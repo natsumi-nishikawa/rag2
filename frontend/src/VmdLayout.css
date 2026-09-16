@@ -1,461 +1,1047 @@
+/* ========================================
+   VMD画面全体
+======================================== */
+
 .vmd-page {
-    width: 100%;
-    max-width: 1250px;
-    margin: 0 auto;
-    color: #292724;
+  width: 100%;
+  max-width: 1250px;
+  margin: 0 auto;
+  color: #292724;
+}
+
+.vmd-header {
+  margin-bottom: 28px;
+}
+
+.vmd-header h1 {
+  margin: 0 0 8px;
+  font-size: 30px;
+}
+
+.vmd-header p {
+  margin: 0;
+  color: #77736d;
+  line-height: 1.7;
+}
+
+
+/* ========================================
+   セクション
+======================================== */
+
+.vmd-section {
+  width: 100%;
+  margin-bottom: 28px;
+  padding: 26px;
+
+  background: #ffffff;
+
+  border-radius: 14px;
+
+  box-shadow:
+    0 4px 18px
+    rgba(0, 0, 0, 0.07);
+}
+
+.vmd-section h2 {
+  margin: 0 0 18px;
+  font-size: 21px;
+}
+
+.vmd-section h3 {
+  margin-top: 25px;
+  margin-bottom: 12px;
+}
+
+
+/* ========================================
+   共通フォーム
+======================================== */
+
+.vmd-form-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(180px, 1fr)
+    );
+
+  gap: 18px;
+}
+
+.vmd-form-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.vmd-form-grid input,
+.vmd-form-grid select {
+  width: 100%;
+
+  padding: 10px 12px;
+
+  border:
+    1px solid #d5d2cc;
+
+  border-radius: 7px;
+
+  background: #ffffff;
+  color: #292724;
+
+  font-size: 15px;
+}
+
+.vmd-form-grid input:focus,
+.vmd-form-grid select:focus {
+  outline: none;
+
+  border-color: #77736d;
+
+  box-shadow:
+    0 0 0 2px
+    rgba(41, 39, 36, 0.08);
+}
+
+.full-width-field {
+  grid-column: 1 / -1;
+}
+
+.store-area-text {
+  margin: 18px 0 0;
+
+  color: #77736d;
+
+  font-size: 14px;
+}
+
+.vmd-help {
+  margin: 0 0 15px;
+
+  color: #77736d;
+
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+
+/* ========================================
+   固定設備ボタン
+======================================== */
+
+.fixture-buttons {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 9px;
+
+  margin: 18px 0;
+}
+
+.fixture-button {
+  padding: 9px 14px;
+
+  border:
+    1px solid #c8c4bd;
+
+  border-radius: 7px;
+
+  background: #ffffff;
+  color: #292724;
+
+  font-size: 14px;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
+}
+
+.fixture-button:hover {
+  background: #f5f4f1;
+}
+
+.fixture-button.active {
+  background: #292724;
+  border-color: #292724;
+  color: #ffffff;
+}
+
+
+/* ========================================
+   テーブル形状
+======================================== */
+
+.table-shape-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin-bottom: 16px;
+
+  padding: 14px 16px;
+
+  background: #faf9f7;
+
+  border-radius: 9px;
+
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.table-shape-row select {
+  padding: 8px 12px;
+
+  border:
+    1px solid #d5d2cc;
+
+  border-radius: 7px;
+
+  background: #ffffff;
+}
+
+
+/* ========================================
+   什器サイズ
+======================================== */
+
+.size-controls {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(120px, 180px)
+    );
+
+  gap: 15px;
+
+  margin-bottom: 20px;
+}
+
+.size-controls label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.size-controls input {
+  width: 100%;
+
+  padding: 10px 12px;
+
+  border:
+    1px solid #d5d2cc;
+
+  border-radius: 7px;
+
+  font-size: 15px;
+}
+
+
+/* ========================================
+   店舗図スクロール領域
+======================================== */
+
+.store-scroll-area {
+  width: 100%;
+
+  overflow-x: auto;
+  overflow-y: auto;
+
+  margin-top: 20px;
+
+  padding: 14px;
+
+  border:
+    1px solid #ddd9d2;
+
+  border-radius: 10px;
+
+  background: #f4f2ee;
+}
+
+
+/* ========================================
+   店舗レイアウト
+
+   横幅・高さはTypeScript側で設定
+   1m = 50px
+======================================== */
+
+.store-layout {
+  position: relative;
+
+  display: block;
+
+  flex-shrink: 0;
+
+  border:
+    3px solid #292724;
+
+  border-radius: 6px;
+
+  background-color: #fafafa;
+
+  background-image:
+    linear-gradient(
+      to right,
+      #e5e2dc 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      #e5e2dc 1px,
+      transparent 1px
+    );
+
+  overflow: hidden;
+
+  cursor: crosshair;
+
+  user-select: none;
+}
+
+
+/* ========================================
+   L字型店舗
+======================================== */
+
+.l-shape-cutout {
+  position: absolute;
+
+  z-index: 100;
+
+  background:
+    repeating-linear-gradient(
+      45deg,
+      #eeeeee,
+      #eeeeee 10px,
+      #e3e3e3 10px,
+      #e3e3e3 20px
+    );
+
+  border-left:
+    3px solid #292724;
+
+  border-top:
+    3px solid #292724;
+
+  pointer-events: none;
+}
+
+
+/* ========================================
+   固定設備 共通
+======================================== */
+
+.layout-item {
+  position: absolute;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  min-width: 20px;
+  min-height: 20px;
+
+  font-size: 12px;
+  font-weight: bold;
+
+  text-align: center;
+
+  user-select: none;
+
+  cursor: grab;
+
+  transform-origin: center;
+
+  z-index: 10;
+
+  box-shadow:
+    0 2px 5px
+    rgba(0, 0, 0, 0.08);
+}
+
+.layout-item:active {
+  cursor: grabbing;
+}
+
+.fixed-layout-item {
+  z-index: 10;
+}
+
+
+/* ========================================
+   テーブル
+======================================== */
+
+.layout-item.table {
+  background: #d8b48a;
+
+  border:
+    2px solid #8b6845;
+
+  color: #29221c;
+
+  border-radius: 4px;
+}
+
+.layout-item.table-circle {
+  border-radius: 50%;
+}
+
+.layout-item.table-square {
+  border-radius: 5px;
+}
+
+.layout-item.table-rectangle {
+  border-radius: 5px;
+}
+
+
+/* ========================================
+   レジ
+======================================== */
+
+.layout-item.register {
+  background: #45413d;
+
+  color: #ffffff;
+
+  border:
+    2px solid #292724;
+
+  border-radius: 4px;
+}
+
+
+/* ========================================
+   試着室
+======================================== */
+
+.layout-item.fitting {
+  background: #e3e0da;
+
+  color: #292724;
+
+  border:
+    2px solid #77736d;
+
+  border-radius: 4px;
+}
+
+
+/* ========================================
+   入口
+======================================== */
+
+.layout-item.entrance {
+  background: #e7f5fb;
+
+  color: #23678d;
+
+  border:
+    2px dashed #3b82b6;
+}
+
+
+/* ========================================
+   壁面ラック
+======================================== */
+
+.layout-item.wallRack {
+  background: #d9e5d7;
+
+  color: #3e5d3a;
+
+  border:
+    2px solid #668461;
+}
+
+
+/* ========================================
+   店内固定ラック
+======================================== */
+
+.layout-item.fixedRack {
+  background: #ddd3e8;
+
+  color: #5a4370;
+
+  border:
+    2px solid #80649a;
+}
+
+
+/* ========================================
+   固定設備 選択状態
+======================================== */
+
+.layout-item.selected {
+  outline:
+    4px solid #e0a72e;
+
+  outline-offset: 3px;
+
+  z-index: 40;
+}
+
+
+/* ========================================
+   AI提案什器 共通
+
+   pointer-events:none は入れない
+   → ドラッグ操作可能
+======================================== */
+
+.ai-placement {
+  position: absolute;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  min-width: 25px;
+  min-height: 25px;
+
+  padding: 4px;
+
+  z-index: 20;
+
+  text-align: center;
+
+  cursor: grab;
+
+  transform-origin: center;
+
+  user-select: none;
+
+  box-shadow:
+    0 3px 8px
+    rgba(0, 0, 0, 0.18);
+}
+
+.ai-placement:active {
+  cursor: grabbing;
+}
+
+
+/* ========================================
+   AI可動ラック
+======================================== */
+
+.ai-rack {
+  background: #d8ecff;
+
+  border:
+    3px solid #2979b8;
+
+  color: #174d74;
+
+  border-radius: 5px;
+}
+
+
+/* ========================================
+   AIボディ
+======================================== */
+
+.ai-body {
+  background: #ffe5b5;
+
+  border:
+    3px solid #d78a17;
+
+  color: #714600;
+
+  border-radius: 50%;
+}
+
+
+/* ========================================
+   AI什器 選択状態
+======================================== */
+
+.ai-placement.selected-ai {
+  outline:
+    4px solid #111111;
+
+  outline-offset: 4px;
+
+  z-index: 50;
+}
+
+.ai-item-name {
+  font-size: 11px;
+  font-weight: bold;
+
+  pointer-events: none;
+}
+
+.ai-product-name {
+  margin-top: 3px;
+
+  max-width: 100%;
+
+  overflow: hidden;
+
+  font-size: 10px;
+
+  line-height: 1.2;
+
+  pointer-events: none;
+}
+
+
+/* ========================================
+   レイアウト操作ボタン
+======================================== */
+
+.layout-actions {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  margin-top: 15px;
+}
+
+.layout-actions button {
+  padding: 9px 14px;
+
+  border:
+    1px solid #c8c4bd;
+
+  border-radius: 7px;
+
+  background: #ffffff;
+  color: #292724;
+
+  cursor: pointer;
+}
+
+.layout-actions button:hover:not(:disabled) {
+  background: #f5f4f1;
+}
+
+.layout-actions button:disabled {
+  opacity: 0.4;
+
+  cursor: not-allowed;
+}
+
+.layout-actions .primary-button {
+  background: #292724;
+
+  border-color: #292724;
+
+  color: #ffffff;
+}
+
+.layout-actions .primary-button:hover {
+  background: #45413c;
+}
+
+
+/* ========================================
+   VMD提案ボタン
+======================================== */
+
+.proposal-button {
+  width: 100%;
+
+  margin-top: 20px;
+
+  padding: 14px 18px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: #292724;
+
+  color: #ffffff;
+
+  font-size: 15px;
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+.proposal-button:hover:not(:disabled) {
+  background: #45413c;
+}
+
+.proposal-button:disabled {
+  opacity: 0.65;
+
+  cursor: wait;
+}
+
+
+/* ========================================
+   ロード表示
+======================================== */
+
+.vmd-loading-info {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  margin-top: 15px;
+
+  padding: 16px;
+
+  background: #faf9f7;
+
+  border-radius: 9px;
+}
+
+.vmd-loading-info strong {
+  font-size: 14px;
+}
+
+.vmd-loading-info p {
+  margin: 5px 0 0;
+
+  color: #77736d;
+
+  font-size: 13px;
+
+  line-height: 1.5;
+}
+
+.loading-spinner {
+  width: 28px;
+  height: 28px;
+
+  flex-shrink: 0;
+
+  border:
+    3px solid #ddd9d2;
+
+  border-top-color:
+    #292724;
+
+  border-radius: 50%;
+
+  animation:
+    vmd-spin 0.8s
+    linear infinite;
+}
+
+@keyframes vmd-spin {
+  to {
+    transform: rotate(360deg);
   }
-  
-  .vmd-header {
-    margin-bottom: 28px;
+}
+
+
+/* ========================================
+   エラー表示
+======================================== */
+
+.vmd-error {
+  margin-top: 12px;
+
+  padding: 12px;
+
+  border-radius: 7px;
+
+  background: #fff0f0;
+
+  color: #a84444;
+
+  font-size: 13px;
+
+  line-height: 1.6;
+}
+
+
+/* ========================================
+   AI提案結果
+======================================== */
+
+.proposal-result {
+  margin-top: 28px;
+}
+
+.proposal-summary {
+  padding: 18px;
+
+  background: #faf9f7;
+
+  border-left:
+    4px solid #292724;
+
+  border-radius: 7px;
+}
+
+.proposal-summary h3 {
+  margin: 0 0 8px;
+
+  font-size: 16px;
+}
+
+.proposal-summary p {
+  margin: 0;
+
+  line-height: 1.8;
+}
+
+
+/* ========================================
+   AI配置を手動修正できる説明
+======================================== */
+
+.proposal-edit-help {
+  margin-top: 14px;
+
+  padding: 12px 14px;
+
+  background: #eef7ff;
+
+  border-left:
+    4px solid #2979b8;
+
+  border-radius: 6px;
+
+  color: #31566f;
+
+  font-size: 13px;
+
+  line-height: 1.6;
+}
+
+
+/* ========================================
+   AI提案カード
+======================================== */
+
+.proposal-list {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(220px, 1fr)
+    );
+
+  gap: 12px;
+
+  margin-top: 14px;
+}
+
+.proposal-item {
+  padding: 16px;
+
+  border:
+    1px solid #ddd9d2;
+
+  border-radius: 9px;
+
+  background: #ffffff;
+}
+
+.proposal-item strong {
+  font-size: 15px;
+}
+
+.proposal-item p {
+  margin: 8px 0;
+
+  font-size: 14px;
+
+  line-height: 1.6;
+}
+
+.proposal-item span {
+  color: #77736d;
+
+  font-size: 12px;
+}
+
+.fixed-proposal {
+  background: #faf9f7;
+}
+
+.fixed-suggestion-title,
+.proposal-source-title {
+  margin-top: 30px;
+}
+
+
+/* ========================================
+   参照資料
+======================================== */
+
+.proposal-sources {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.proposal-sources a {
+  padding: 11px 13px;
+
+  border:
+    1px solid #e0ddd7;
+
+  border-radius: 7px;
+
+  color: #292724;
+
+  text-decoration: none;
+
+  background: #faf9f7;
+}
+
+.proposal-sources a:hover {
+  background: #f0eee9;
+}
+
+
+/* ========================================
+   保存済み店舗
+======================================== */
+
+.saved-store-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+.saved-store-item {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 18px;
+
+  border:
+    1px solid #e3e0da;
+
+  border-radius: 9px;
+
+  background: #faf9f7;
+}
+
+.saved-store-item > div:first-child {
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+.saved-store-item strong {
+  font-size: 16px;
+}
+
+.saved-store-item span {
+  color: #817d76;
+
+  font-size: 13px;
+}
+
+.saved-store-actions {
+  display: flex;
+
+  gap: 8px;
+}
+
+.saved-store-actions button {
+  padding: 8px 14px;
+
+  border:
+    1px solid #c8c4bd;
+
+  border-radius: 6px;
+
+  background: #ffffff;
+
+  color: #292724;
+
+  cursor: pointer;
+}
+
+.saved-store-actions button:hover {
+  background: #f0eee9;
+}
+
+
+/* ========================================
+   画面幅対応
+
+   店舗図そのものは縮小しない
+   store-scroll-areaでスクロールする
+======================================== */
+
+@media (max-width: 900px) {
+  .vmd-form-grid {
+    grid-template-columns:
+      1fr;
   }
-  
+
+  .full-width-field {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 700px) {
+  .vmd-section {
+    padding: 18px;
+  }
+
   .vmd-header h1 {
-    margin: 0 0 8px;
-    font-size: 30px;
+    font-size: 25px;
   }
-  
-  .vmd-header p {
-    margin: 0;
-    color: #77736d;
-    line-height: 1.7;
-  }
-  
-  /* カード */
-  
-  .vmd-card {
-    background: #ffffff;
-    padding: 26px;
-    border-radius: 14px;
-    box-shadow:
-      0 4px 18px
-      rgba(0, 0, 0, 0.07);
-  }
-  
-  .vmd-card h2 {
-    margin: 0 0 16px;
-    font-size: 21px;
-  }
-  
-  /* 店舗基本設定 */
-  
-  .store-settings {
-    display: grid;
+
+  .size-controls {
     grid-template-columns:
-      repeat(4, minmax(140px, 1fr));
-    gap: 18px;
-    align-items: end;
+      1fr 1fr;
   }
-  
-  .store-settings label,
-  .fixture-size label,
-  .condition-section label {
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-    font-size: 14px;
-    font-weight: bold;
-  }
-  
-  .store-settings input,
-  .store-settings select,
-  .fixture-size input,
-  .condition-section input,
-  .condition-section select {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #d5d2cc;
-    border-radius: 7px;
-    background: white;
-    color: #292724;
-    font-size: 15px;
-  }
-  
-  .area-display {
-    min-height: 64px;
-    padding: 10px 14px;
-    border-radius: 8px;
-    background: #f5f4f1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  
-  .area-display span {
-    color: #77736d;
-    font-size: 13px;
-  }
-  
-  .area-display strong {
-    margin-top: 3px;
-    font-size: 20px;
-  }
-  
-  .small-note {
-    margin: 14px 0 0;
-    color: #77736d;
-    font-size: 13px;
-  }
-  
-  /* メイン */
-  
-  .vmd-main-grid {
-    display: grid;
-    grid-template-columns:
-      minmax(0, 2fr)
-      minmax(280px, 1fr);
-    gap: 28px;
-    align-items: start;
-    margin-top: 28px;
-  }
-  
-  /* 設備ボタン */
-  
-  .help-text {
-    margin: 0;
-    color: #77736d;
-    font-size: 14px;
-    line-height: 1.7;
-  }
-  
-  .fixture-buttons,
-  .shape-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 9px;
-  }
-  
-  .fixture-buttons {
-    margin: 18px 0;
-  }
-  
-  .fixture-buttons button,
-  .shape-buttons button,
-  .layout-actions button {
-    padding: 9px 14px;
-    border: 1px solid #c8c4bd;
-    border-radius: 7px;
-    background: #ffffff;
-    color: #292724;
-    cursor: pointer;
-  }
-  
-  .fixture-buttons button:hover,
-  .shape-buttons button:hover,
-  .layout-actions button:hover {
-    background: #f5f4f1;
-  }
-  
-  .fixture-buttons button.selected,
-  .shape-buttons button.selected {
-    background: #292724;
-    border-color: #292724;
-    color: white;
-  }
-  
-  /* テーブル形状 */
-  
-  .fixture-options {
-    margin-bottom: 18px;
-    padding: 16px;
-    background: #faf9f7;
-    border-radius: 9px;
-  }
-  
-  .option-title {
-    display: block;
-    margin-bottom: 10px;
-    font-size: 14px;
-    font-weight: bold;
-  }
-  
-  /* 設備サイズ */
-  
-  .fixture-size {
-    display: grid;
-    grid-template-columns:
-      repeat(2, minmax(120px, 180px));
-    gap: 15px;
-    margin-bottom: 20px;
-  }
-  
-  /* 店舗レイアウト */
-  
-  .store-layout {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 3 / 2;
-    min-height: 480px;
-    border: 3px solid #292724;
-    border-radius: 5px;
-    background-color: #fafafa;
-  
-    background-image:
-      linear-gradient(
-        #e5e2dc 1px,
-        transparent 1px
-      ),
-      linear-gradient(
-        90deg,
-        #e5e2dc 1px,
-        transparent 1px
-      );
-  
-    background-size: 40px 40px;
-  
-    overflow: hidden;
-    cursor: crosshair;
-  }
-  
-  /* L字の欠け部分 */
-  
-  .l-shape-cutout {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    width: 50%;
-    height: 50%;
-    z-index: 5;
-  
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  
-    background:
-      repeating-linear-gradient(
-        45deg,
-        #eeeeee,
-        #eeeeee 10px,
-        #e3e3e3 10px,
-        #e3e3e3 20px
-      );
-  
-    border-left:
-      3px solid #292724;
-  
-    border-top:
-      3px solid #292724;
-  
-    color: #999;
-    font-size: 13px;
-  
-    cursor: not-allowed;
-  }
-  
-  /* 配置設備 */
-  
-  .layout-item {
-    position: absolute;
-  
-    transform:
-      translate(-50%, -50%);
-  
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  
-    min-width: 35px;
-    min-height: 25px;
-  
-    font-size: 12px;
-    font-weight: bold;
-  
-    cursor: pointer;
-    user-select: none;
-  
-    z-index: 3;
-  
-    transition:
-      outline 0.1s,
-      box-shadow 0.1s;
-  }
-  
-  /* テーブル */
-  
-  .layout-item.table {
-    background: #d8b48a;
-    border: 2px solid #8b6845;
-    border-radius: 4px;
-  }
-  
-  .layout-item.table.circle-table {
-    border-radius: 50%;
-  }
-  
-  /* レジ */
-  
-  .layout-item.register {
-    background: #45413d;
-    color: white;
-    border: 2px solid #292724;
-    border-radius: 4px;
-  }
-  
-  /* 試着室 */
-  
-  .layout-item.fitting {
-    background: #e3e0da;
-    border: 2px solid #77736d;
-    border-radius: 4px;
-  }
-  
-  /* 入口 */
-  
-  .layout-item.entrance {
-    background: #e7f5fb;
-    color: #23678d;
-    border:
-      2px dashed #3b82b6;
-  }
-  
-  /* 壁面ラック */
-  
-  .layout-item.wallRack {
-    background: #d9e5d7;
-    color: #3e5d3a;
-    border: 2px solid #668461;
-  }
-  
-  /* 中央などにある固定ラック */
-  
-  .layout-item.fixedRack {
-    background: #ddd3e8;
-    color: #5a4370;
-    border: 2px solid #80649a;
-  }
-  
-  /* 選択状態 */
-  
-  .layout-item.item-selected {
-    outline: 4px solid #e0a72e;
-    outline-offset: 2px;
-  
-    box-shadow:
-      0 0 0 2px
-      rgba(255, 255, 255, 0.9);
-  }
-  
-  /* レイアウト操作 */
-  
+
   .layout-actions {
-    margin-top: 14px;
-  
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  
-    gap: 15px;
-  }
-  
-  .layout-actions span {
-    color: #77736d;
-    font-size: 13px;
-  }
-  
-  .layout-actions > div {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 7px;
-  }
-  
-  .layout-actions button:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
-  
-  .layout-actions
-    .danger-button {
-    color: #a84444;
-    border-color: #d4a0a0;
-  }
-  
-  /* 店舗条件 */
-  
-  .condition-section {
-    display: flex;
     flex-direction: column;
   }
-  
-  .condition-section label {
-    margin-bottom: 17px;
-  }
-  
-  .fixture-summary {
-    margin-top: 5px;
-    padding: 16px;
-    border-radius: 9px;
-    background: #faf9f7;
-  }
-  
-  .fixture-summary h3 {
-    margin: 0 0 10px;
-    font-size: 15px;
-  }
-  
-  .fixture-summary p {
-    margin: 0;
-    color: #77736d;
-    font-size: 13px;
-  }
-  
-  .fixture-summary ul {
-    margin: 0;
-    padding-left: 20px;
-    color: #55514c;
-    font-size: 14px;
-    line-height: 1.8;
-  }
-  
-  /* AIボタン */
-  
-  .proposal-button {
+
+  .layout-actions button {
     width: 100%;
-    margin-top: 22px;
-    padding: 14px 18px;
-  
-    border: none;
-    border-radius: 8px;
-  
-    background: #292724;
-    color: white;
-  
-    font-size: 15px;
-    font-weight: bold;
-  
-    cursor: pointer;
   }
-  
-  .proposal-button:hover {
-    background: #45413c;
+
+  .saved-store-item {
+    align-items: stretch;
+
+    flex-direction: column;
   }
-  
-  /* レスポンシブ */
-  
-  @media (max-width: 1050px) {
-    .store-settings {
-      grid-template-columns:
-        repeat(2, 1fr);
-    }
-  
-    .vmd-main-grid {
-      grid-template-columns: 1fr;
-    }
+
+  .saved-store-actions {
+    width: 100%;
   }
-  
-  @media (max-width: 700px) {
-    .store-settings {
-      grid-template-columns: 1fr;
-    }
-  
-    .fixture-size {
-      grid-template-columns: 1fr 1fr;
-    }
-  
-    .store-layout {
-      min-height: 380px;
-    }
-  
-    .layout-actions {
-      align-items: flex-start;
-      flex-direction: column;
-    }
+
+  .saved-store-actions button {
+    flex: 1;
   }
+}
