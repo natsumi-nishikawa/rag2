@@ -1,0 +1,461 @@
+.vmd-page {
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto;
+    color: #292724;
+  }
+  
+  .vmd-header {
+    margin-bottom: 28px;
+  }
+  
+  .vmd-header h1 {
+    margin: 0 0 8px;
+    font-size: 30px;
+  }
+  
+  .vmd-header p {
+    margin: 0;
+    color: #77736d;
+    line-height: 1.7;
+  }
+  
+  /* カード */
+  
+  .vmd-card {
+    background: #ffffff;
+    padding: 26px;
+    border-radius: 14px;
+    box-shadow:
+      0 4px 18px
+      rgba(0, 0, 0, 0.07);
+  }
+  
+  .vmd-card h2 {
+    margin: 0 0 16px;
+    font-size: 21px;
+  }
+  
+  /* 店舗基本設定 */
+  
+  .store-settings {
+    display: grid;
+    grid-template-columns:
+      repeat(4, minmax(140px, 1fr));
+    gap: 18px;
+    align-items: end;
+  }
+  
+  .store-settings label,
+  .fixture-size label,
+  .condition-section label {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  
+  .store-settings input,
+  .store-settings select,
+  .fixture-size input,
+  .condition-section input,
+  .condition-section select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d5d2cc;
+    border-radius: 7px;
+    background: white;
+    color: #292724;
+    font-size: 15px;
+  }
+  
+  .area-display {
+    min-height: 64px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: #f5f4f1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .area-display span {
+    color: #77736d;
+    font-size: 13px;
+  }
+  
+  .area-display strong {
+    margin-top: 3px;
+    font-size: 20px;
+  }
+  
+  .small-note {
+    margin: 14px 0 0;
+    color: #77736d;
+    font-size: 13px;
+  }
+  
+  /* メイン */
+  
+  .vmd-main-grid {
+    display: grid;
+    grid-template-columns:
+      minmax(0, 2fr)
+      minmax(280px, 1fr);
+    gap: 28px;
+    align-items: start;
+    margin-top: 28px;
+  }
+  
+  /* 設備ボタン */
+  
+  .help-text {
+    margin: 0;
+    color: #77736d;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  
+  .fixture-buttons,
+  .shape-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+  }
+  
+  .fixture-buttons {
+    margin: 18px 0;
+  }
+  
+  .fixture-buttons button,
+  .shape-buttons button,
+  .layout-actions button {
+    padding: 9px 14px;
+    border: 1px solid #c8c4bd;
+    border-radius: 7px;
+    background: #ffffff;
+    color: #292724;
+    cursor: pointer;
+  }
+  
+  .fixture-buttons button:hover,
+  .shape-buttons button:hover,
+  .layout-actions button:hover {
+    background: #f5f4f1;
+  }
+  
+  .fixture-buttons button.selected,
+  .shape-buttons button.selected {
+    background: #292724;
+    border-color: #292724;
+    color: white;
+  }
+  
+  /* テーブル形状 */
+  
+  .fixture-options {
+    margin-bottom: 18px;
+    padding: 16px;
+    background: #faf9f7;
+    border-radius: 9px;
+  }
+  
+  .option-title {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  
+  /* 設備サイズ */
+  
+  .fixture-size {
+    display: grid;
+    grid-template-columns:
+      repeat(2, minmax(120px, 180px));
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  
+  /* 店舗レイアウト */
+  
+  .store-layout {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    min-height: 480px;
+    border: 3px solid #292724;
+    border-radius: 5px;
+    background-color: #fafafa;
+  
+    background-image:
+      linear-gradient(
+        #e5e2dc 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        90deg,
+        #e5e2dc 1px,
+        transparent 1px
+      );
+  
+    background-size: 40px 40px;
+  
+    overflow: hidden;
+    cursor: crosshair;
+  }
+  
+  /* L字の欠け部分 */
+  
+  .l-shape-cutout {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 50%;
+    height: 50%;
+    z-index: 5;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    background:
+      repeating-linear-gradient(
+        45deg,
+        #eeeeee,
+        #eeeeee 10px,
+        #e3e3e3 10px,
+        #e3e3e3 20px
+      );
+  
+    border-left:
+      3px solid #292724;
+  
+    border-top:
+      3px solid #292724;
+  
+    color: #999;
+    font-size: 13px;
+  
+    cursor: not-allowed;
+  }
+  
+  /* 配置設備 */
+  
+  .layout-item {
+    position: absolute;
+  
+    transform:
+      translate(-50%, -50%);
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    min-width: 35px;
+    min-height: 25px;
+  
+    font-size: 12px;
+    font-weight: bold;
+  
+    cursor: pointer;
+    user-select: none;
+  
+    z-index: 3;
+  
+    transition:
+      outline 0.1s,
+      box-shadow 0.1s;
+  }
+  
+  /* テーブル */
+  
+  .layout-item.table {
+    background: #d8b48a;
+    border: 2px solid #8b6845;
+    border-radius: 4px;
+  }
+  
+  .layout-item.table.circle-table {
+    border-radius: 50%;
+  }
+  
+  /* レジ */
+  
+  .layout-item.register {
+    background: #45413d;
+    color: white;
+    border: 2px solid #292724;
+    border-radius: 4px;
+  }
+  
+  /* 試着室 */
+  
+  .layout-item.fitting {
+    background: #e3e0da;
+    border: 2px solid #77736d;
+    border-radius: 4px;
+  }
+  
+  /* 入口 */
+  
+  .layout-item.entrance {
+    background: #e7f5fb;
+    color: #23678d;
+    border:
+      2px dashed #3b82b6;
+  }
+  
+  /* 壁面ラック */
+  
+  .layout-item.wallRack {
+    background: #d9e5d7;
+    color: #3e5d3a;
+    border: 2px solid #668461;
+  }
+  
+  /* 中央などにある固定ラック */
+  
+  .layout-item.fixedRack {
+    background: #ddd3e8;
+    color: #5a4370;
+    border: 2px solid #80649a;
+  }
+  
+  /* 選択状態 */
+  
+  .layout-item.item-selected {
+    outline: 4px solid #e0a72e;
+    outline-offset: 2px;
+  
+    box-shadow:
+      0 0 0 2px
+      rgba(255, 255, 255, 0.9);
+  }
+  
+  /* レイアウト操作 */
+  
+  .layout-actions {
+    margin-top: 14px;
+  
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  
+    gap: 15px;
+  }
+  
+  .layout-actions span {
+    color: #77736d;
+    font-size: 13px;
+  }
+  
+  .layout-actions > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+  
+  .layout-actions button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  
+  .layout-actions
+    .danger-button {
+    color: #a84444;
+    border-color: #d4a0a0;
+  }
+  
+  /* 店舗条件 */
+  
+  .condition-section {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .condition-section label {
+    margin-bottom: 17px;
+  }
+  
+  .fixture-summary {
+    margin-top: 5px;
+    padding: 16px;
+    border-radius: 9px;
+    background: #faf9f7;
+  }
+  
+  .fixture-summary h3 {
+    margin: 0 0 10px;
+    font-size: 15px;
+  }
+  
+  .fixture-summary p {
+    margin: 0;
+    color: #77736d;
+    font-size: 13px;
+  }
+  
+  .fixture-summary ul {
+    margin: 0;
+    padding-left: 20px;
+    color: #55514c;
+    font-size: 14px;
+    line-height: 1.8;
+  }
+  
+  /* AIボタン */
+  
+  .proposal-button {
+    width: 100%;
+    margin-top: 22px;
+    padding: 14px 18px;
+  
+    border: none;
+    border-radius: 8px;
+  
+    background: #292724;
+    color: white;
+  
+    font-size: 15px;
+    font-weight: bold;
+  
+    cursor: pointer;
+  }
+  
+  .proposal-button:hover {
+    background: #45413c;
+  }
+  
+  /* レスポンシブ */
+  
+  @media (max-width: 1050px) {
+    .store-settings {
+      grid-template-columns:
+        repeat(2, 1fr);
+    }
+  
+    .vmd-main-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  @media (max-width: 700px) {
+    .store-settings {
+      grid-template-columns: 1fr;
+    }
+  
+    .fixture-size {
+      grid-template-columns: 1fr 1fr;
+    }
+  
+    .store-layout {
+      min-height: 380px;
+    }
+  
+    .layout-actions {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
