@@ -1,7 +1,13 @@
 import os
 import shutil
 
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import (
+    FastAPI,
+    UploadFile,
+    File,
+    Form,
+    HTTPException,
+)
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
@@ -10,7 +16,7 @@ from rag import (
     register_pdf,
     delete_pdf_from_db,
     generate_answer,
-    generate_vmd_proposal
+    generate_vmd_proposal,
 )
 
 
@@ -19,7 +25,10 @@ app = FastAPI(
 )
 
 
-# React（リアクト）からの通信を許可
+# ==============================
+# Reactからの通信を許可
+# ==============================
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
@@ -29,7 +38,13 @@ app.add_middleware(
 )
 
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# ==============================
+# 保存先
+# ==============================
+
+BASE_DIR = os.path.dirname(
+    os.path.abspath(__file__)
+)
 
 UPLOAD_DIR = os.path.join(
     BASE_DIR,
@@ -60,6 +75,11 @@ class VmdRequest(BaseModel):
     movableItems: dict
     merchandising: dict
 
+
+# ==============================
+# トップ
+# ==============================
+
 @app.get("/")
 def home():
 
@@ -73,7 +93,19 @@ def home():
 # ==============================
 
 @app.post("/upload")
-def upload_pdf(file: UploadFile = File(...)):
+def upload_pdf(
+    file: UploadFile = File(...),
+    document_id: str = Form(...),
+    title: str = Form(...),
+    category: str = Form(...),
+    target_role: str = Form(...),
+    updated_at: str = Form(...),
+    status: str = Form(...),
+):
+
+    # --------------------------
+    # ファイル確認
+    # --------------------------
 
     if not file.filename:
         raise HTTPException(
@@ -87,12 +119,67 @@ def upload_pdf(file: UploadFile = File(...)):
             detail="PDFファイルを選択してください"
         )
 
+    # --------------------------
+    # Metadata確認
+    # --------------------------
+
+    document_id = document_id.strip()
+    title = title.strip()
+    category = category.strip()
+    target_role = target_role.strip()
+    updated_at = updated_at.strip()
+    status = status.strip()
+
+    if not document_id:
+        raise HTTPException(
+            status_code=400,
+            detail="文書番号を入力してください"
+        )
+
+    if not title:
+        raise HTTPException(
+            status_code=400,
+            detail="資料名を入力してください"
+        )
+
+    if not category:
+        raise HTTPException(
+            status_code=400,
+            detail="カテゴリを選択してください"
+        )
+
+    if not updated_at:
+        raise HTTPException(
+            status_code=400,
+            detail="更新日を入力してください"
+        )
+
+    # --------------------------
+    # Metadata作成
+    # --------------------------
+
+    metadata = {
+        "document_id": document_id,
+        "title": title,
+        "category": category,
+        "target_role": target_role,
+        "updated_at": updated_at,
+        "status": status,
+    }
+
+    # 確認用
+    print("受信したMetadata：")
+    print(metadata)
+
+    # --------------------------
+    # PDF保存
+    # --------------------------
+
     file_path = os.path.join(
         UPLOAD_DIR,
         file.filename
     )
 
-    # 同じファイルが存在する場合
     if os.path.exists(file_path):
 
         raise HTTPException(
@@ -100,7 +187,6 @@ def upload_pdf(file: UploadFile = File(...)):
             detail="同じ名前のPDFがすでに登録されています"
         )
 
-    # PDF保存
     with open(file_path, "wb") as buffer:
 
         shutil.copyfileobj(
@@ -108,16 +194,24 @@ def upload_pdf(file: UploadFile = File(...)):
             buffer
         )
 
+    # --------------------------
+    # RAG登録
+    # --------------------------
+
     try:
 
-        result = register_pdf(file_path)
+        result = register_pdf(
+            file_path,
+            metadata
+        )
 
         return {
             "success": True,
             "message": "PDFを登録しました",
             "filename": result["filename"],
             "pages": result["pages"],
-            "chunks": result["chunks"]
+            "chunks": result["chunks"],
+            "metadata": metadata,
         }
 
     except Exception as error:
@@ -128,7 +222,10 @@ def upload_pdf(file: UploadFile = File(...)):
 
         raise HTTPException(
             status_code=500,
-            detail=f"PDF登録中にエラーが発生しました：{str(error)}"
+            detail=(
+                "PDF登録中にエラーが発生しました："
+                f"{str(error)}"
+            )
         )
 
 
@@ -141,9 +238,13 @@ def get_documents():
 
     files = []
 
-    for file_name in os.listdir(UPLOAD_DIR):
+    for file_name in os.listdir(
+        UPLOAD_DIR
+    ):
 
-        if file_name.lower().endswith(".pdf"):
+        if file_name.lower().endswith(
+            ".pdf"
+        ):
 
             files.append({
                 "filename": file_name
@@ -158,24 +259,34 @@ def get_documents():
 # PDF削除
 # ==============================
 
-@app.delete("/documents/{file_name}")
-def delete_document(file_name: str):
+@app.delete(
+    "/documents/{file_name}"
+)
+def delete_document(
+    file_name: str
+):
 
     file_path = os.path.join(
         UPLOAD_DIR,
         file_name
     )
 
-    if not os.path.exists(file_path):
+    if not os.path.exists(
+        file_path
+    ):
 
         raise HTTPException(
             status_code=404,
             detail="指定されたPDFがありません"
         )
 
-    delete_pdf_from_db(file_name)
+    delete_pdf_from_db(
+        file_name
+    )
 
-    os.remove(file_path)
+    os.remove(
+        file_path
+    )
 
     return {
         "success": True,
@@ -188,9 +299,13 @@ def delete_document(file_name: str):
 # ==============================
 
 @app.post("/ask")
-def ask_question(request: QuestionRequest):
+def ask_question(
+    request: QuestionRequest
+):
 
-    question = request.question.strip()
+    question = (
+        request.question.strip()
+    )
 
     if not question:
 
@@ -199,23 +314,33 @@ def ask_question(request: QuestionRequest):
             detail="質問を入力してください"
         )
 
-    result = generate_answer(question)
+    result = generate_answer(
+        question
+    )
 
     return result
+
 
 # ==============================
 # PDF表示
 # ==============================
 
-@app.get("/documents/{file_name}/view")
-def view_document(file_name: str):
+@app.get(
+    "/documents/{file_name}/view"
+)
+def view_document(
+    file_name: str
+):
 
     file_path = os.path.join(
         UPLOAD_DIR,
         file_name
     )
 
-    if not os.path.exists(file_path):
+    if not os.path.exists(
+        file_path
+    ):
+
         raise HTTPException(
             status_code=404,
             detail="指定されたPDFがありません"
@@ -228,20 +353,36 @@ def view_document(file_name: str):
         content_disposition_type="inline"
     )
 
+
+# ==============================
+# VMD提案
+# ==============================
+
 @app.post("/vmd/propose")
-def propose_vmd(request: VmdRequest):
+def propose_vmd(
+    request: VmdRequest
+):
 
     try:
 
         data = {
-            "store": request.store,
-            "fixedItems": request.fixedItems,
-            "movableItems": request.movableItems,
-            "merchandising": request.merchandising,
+            "store":
+                request.store,
+
+            "fixedItems":
+                request.fixedItems,
+
+            "movableItems":
+                request.movableItems,
+
+            "merchandising":
+                request.merchandising,
         }
 
-        result = generate_vmd_proposal(
-            data
+        result = (
+            generate_vmd_proposal(
+                data
+            )
         )
 
         return result

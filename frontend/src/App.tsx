@@ -16,12 +16,35 @@ type Page = "question" | "documents" | "vmd";
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>("question");
 
+  // ============================
+  // PDF
+  // ============================
+
   const [file, setFile] = useState<File | null>(null);
   const [documents, setDocuments] = useState<Document[]>([]);
+
+  // ============================
+  // Metadata
+  // ============================
+
+  const [documentId, setDocumentId] = useState("");
+  const [documentTitle, setDocumentTitle] = useState("");
+  const [category, setCategory] = useState("");
+  const [targetRole, setTargetRole] = useState("all");
+  const [updatedAt, setUpdatedAt] = useState("");
+  const [documentStatus, setDocumentStatus] = useState("active");
+
+  // ============================
+  // 質問
+  // ============================
 
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [sources, setSources] = useState<Source[]>([]);
+
+  // ============================
+  // 共通
+  // ============================
 
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -61,8 +84,35 @@ function App() {
       return;
     }
 
+    if (!documentId.trim()) {
+      setMessage("文書番号を入力してください");
+      return;
+    }
+
+    if (!documentTitle.trim()) {
+      setMessage("資料名を入力してください");
+      return;
+    }
+
+    if (!category) {
+      setMessage("カテゴリを選択してください");
+      return;
+    }
+
+    if (!updatedAt) {
+      setMessage("更新日を入力してください");
+      return;
+    }
+
     const formData = new FormData();
+
     formData.append("file", file);
+    formData.append("document_id", documentId);
+    formData.append("title", documentTitle);
+    formData.append("category", category);
+    formData.append("target_role", targetRole);
+    formData.append("updated_at", updatedAt);
+    formData.append("status", documentStatus);
 
     setLoading(true);
     setMessage("PDFを登録しています...");
@@ -89,7 +139,14 @@ function App() {
         `${data.filename} を登録しました`
       );
 
+      // 登録後に入力内容をリセット
       setFile(null);
+      setDocumentId("");
+      setDocumentTitle("");
+      setCategory("");
+      setTargetRole("all");
+      setUpdatedAt("");
+      setDocumentStatus("active");
 
       await loadDocuments();
     } catch (error) {
@@ -217,7 +274,9 @@ function App() {
   return (
     <div className="app-layout">
 
-      {/* サイドバー */}
+      {/* ============================
+          サイドバー
+      ============================ */}
 
       <aside className="sidebar">
 
@@ -281,7 +340,9 @@ function App() {
 
       </aside>
 
-      {/* メイン画面 */}
+      {/* ============================
+          メイン画面
+      ============================ */}
 
       <main className="main-content">
 
@@ -392,20 +453,188 @@ function App() {
               </p>
             </div>
 
+            {/* ============================
+                PDF・Metadata登録
+            ============================ */}
+
             <div className="upload-box">
 
-              <input
-                type="file"
-                accept=".pdf"
-                onChange={(event) => {
-                  const selected =
-                    event.target.files?.[0];
+              {/* PDF */}
 
-                  if (selected) {
-                    setFile(selected);
-                  }
-                }}
-              />
+              <div className="metadata-field">
+                <label>PDFファイル</label>
+
+                <input
+                  type="file"
+                  accept=".pdf"
+                  onChange={(event) => {
+                    const selected =
+                      event.target.files?.[0];
+
+                    if (selected) {
+                      setFile(selected);
+                    }
+                  }}
+                />
+              </div>
+
+              {/* Metadata */}
+
+              <div className="metadata-form">
+
+                {/* 文書番号 */}
+
+                <div className="metadata-field">
+                  <label>文書番号</label>
+
+                  <input
+                    type="text"
+                    value={documentId}
+                    onChange={(event) =>
+                      setDocumentId(
+                        event.target.value
+                      )
+                    }
+                    placeholder="例：CS-001"
+                  />
+                </div>
+
+                {/* 資料名 */}
+
+                <div className="metadata-field">
+                  <label>資料名</label>
+
+                  <input
+                    type="text"
+                    value={documentTitle}
+                    onChange={(event) =>
+                      setDocumentTitle(
+                        event.target.value
+                      )
+                    }
+                    placeholder="例：接客・返品マニュアル"
+                  />
+                </div>
+
+                {/* カテゴリ */}
+
+                <div className="metadata-field">
+                  <label>カテゴリ</label>
+
+                  <select
+                    value={category}
+                    onChange={(event) =>
+                      setCategory(
+                        event.target.value
+                      )
+                    }
+                  >
+                    <option value="">
+                      選択してください
+                    </option>
+
+                    <option value="customer-service">
+                      接客・返品
+                    </option>
+
+                    <option value="inventory">
+                      在庫・棚卸し
+                    </option>
+
+                    <option value="store-operation">
+                      店舗運営
+                    </option>
+
+                    <option value="hr">
+                      勤怠・社内ルール
+                    </option>
+
+                    <option value="trouble">
+                      トラブル対応
+                    </option>
+
+                    <option value="vmd">
+                      VMD
+                    </option>
+
+                    <option value="other">
+                      その他
+                    </option>
+
+                  </select>
+                </div>
+
+                {/* 対象者 */}
+
+                <div className="metadata-field">
+                  <label>対象者</label>
+
+                  <select
+                    value={targetRole}
+                    onChange={(event) =>
+                      setTargetRole(
+                        event.target.value
+                      )
+                    }
+                  >
+                    <option value="all">
+                      全スタッフ
+                    </option>
+
+                    <option value="manager">
+                      店長・MG
+                    </option>
+
+                    <option value="headquarters">
+                      本社
+                    </option>
+
+                  </select>
+                </div>
+
+                {/* 更新日 */}
+
+                <div className="metadata-field">
+                  <label>更新日</label>
+
+                  <input
+                    type="date"
+                    value={updatedAt}
+                    onChange={(event) =>
+                      setUpdatedAt(
+                        event.target.value
+                      )
+                    }
+                  />
+                </div>
+
+                {/* 状態 */}
+
+                <div className="metadata-field">
+                  <label>状態</label>
+
+                  <select
+                    value={documentStatus}
+                    onChange={(event) =>
+                      setDocumentStatus(
+                        event.target.value
+                      )
+                    }
+                  >
+                    <option value="active">
+                      有効
+                    </option>
+
+                    <option value="inactive">
+                      無効
+                    </option>
+
+                  </select>
+                </div>
+
+              </div>
+
+              {/* 登録ボタン */}
 
               <button
                 className="primary-button"
@@ -419,11 +648,17 @@ function App() {
 
             </div>
 
+            {/* メッセージ */}
+
             {message && (
               <div className="message">
                 {message}
               </div>
             )}
+
+            {/* ============================
+                登録済み資料
+            ============================ */}
 
             <div className="document-section">
 

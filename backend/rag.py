@@ -8,7 +8,8 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_google_genai import ChatGoogleGenerativeAI
-
+from rank_bm25 import BM25Okapi
+from sentence_transformers import CrossEncoder
 
 # ==============================
 # 基本設定
@@ -31,6 +32,13 @@ embeddings = HuggingFaceEmbeddings(
     model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 )
 
+# ==============================
+# Reranker
+# ==============================
+
+reranker = CrossEncoder(
+    "cross-encoder/ms-marco-MiniLM-L6-v2"
+)
 
 # ==============================
 # Chroma取得
@@ -95,11 +103,14 @@ def clean_pdf_text(text):
 # PDF登録
 # ==============================
 
-def register_pdf(file_path):
+def register_pdf(file_path, metadata):
 
     file_name = os.path.basename(file_path)
 
     print(f"\nPDF読み込み開始：{file_name}")
+
+    print("登録Metadata：")
+    print(metadata)
 
     loader = PyPDFLoader(file_path)
 
@@ -114,10 +125,12 @@ def register_pdf(file_path):
             document.page_content
         )
 
-        # ファイル名を保存
+        # --------------------------
+        # 元から使っているMetadata
+        # --------------------------
+
         document.metadata["source_file"] = file_name
 
-        # ページ番号を保存
         page_number = document.metadata.get(
             "page",
             0
@@ -125,6 +138,52 @@ def register_pdf(file_path):
 
         document.metadata["page_number"] = (
             page_number + 1
+        )
+
+        # --------------------------
+        # 画面から入力されたMetadata
+        # --------------------------
+
+        document.metadata["document_id"] = (
+            metadata.get(
+                "document_id",
+                ""
+            )
+        )
+
+        document.metadata["title"] = (
+            metadata.get(
+                "title",
+                ""
+            )
+        )
+
+        document.metadata["category"] = (
+            metadata.get(
+                "category",
+                ""
+            )
+        )
+
+        document.metadata["target_role"] = (
+            metadata.get(
+                "target_role",
+                "all"
+            )
+        )
+
+        document.metadata["updated_at"] = (
+            metadata.get(
+                "updated_at",
+                ""
+            )
+        )
+
+        document.metadata["status"] = (
+            metadata.get(
+                "status",
+                "active"
+            )
         )
 
         # 空ページは登録しない
@@ -164,7 +223,9 @@ def register_pdf(file_path):
 
     vector_db = get_vector_db()
 
-    vector_db.add_documents(chunks)
+    vector_db.add_documents(
+        chunks
+    )
 
     print(
         f"登録完了：{file_name}"
@@ -178,16 +239,23 @@ def register_pdf(file_path):
         f"Chunk数：{len(chunks)}"
     )
 
+    # Metadata確認用
+    if chunks:
+
+        print(
+            "\n登録したChunkのMetadata："
+        )
+
+        print(
+            chunks[0].metadata
+        )
+        
     return {
-
         "filename": file_name,
-
         "pages": len(cleaned_documents),
-
-        "chunks": len(chunks)
+        "chunks": len(chunks),
+        "metadata": metadata
     }
-
-
 # ==============================
 # PDF削除
 # ==============================
@@ -213,23 +281,374 @@ def delete_pdf_from_db(file_name):
             ids=ids
         )
 
+# ==============================
+# BM25用の簡易トークン分割
+# ==============================
+
+def tokenize_for_bm25(text):
+
+    if not text:
+        return []
+
+    text = text.lower()
+
+    # 日本語・英数字を検索対象にする
+    tokens = re.findall(
+        r"[一-龯ぁ-んァ-ヶー]+|[a-zA-Z0-9]+",
+        text
+    )
+
+    # 日本語は文字単位でも持たせる
+    expanded_tokens = []
+
+    for token in tokens:
+
+        expanded_tokens.append(token)
+
+        if re.fullmatch(
+            r"[一-龯ぁ-んァ-ヶー]+",
+            token
+        ):
+
+            # 2文字単位に分割
+            for i in range(
+                len(token) - 1
+            ):
+
+                expanded_tokens.append(
+                    token[i:i + 2]
+                )
+
+    return expanded_tokens
 
 # ==============================
-# 社内資料検索
+# Reranking
+# ==============================
+
+def rerank_documents(
+    question,
+    documents,
+    top_k=5
+):
+
+    if not documents:
+        return []
+
+    # 質問と各Chunkをペアにする
+    pairs = [
+        (
+            question,
+            document.page_content
+        )
+        for document in documents
+    ]
+
+    # CrossEncoderで関連度を評価
+    scores = reranker.predict(
+        pairs
+    )
+
+    scored_documents = []
+
+    for document, score in zip(
+        documents,
+        scores
+    ):
+
+        scored_documents.append(
+            (
+                document,
+                float(score)
+            )
+        )
+
+    # 関連度が高い順
+    scored_documents.sort(
+        key=lambda item: item[1],
+        reverse=True
+    )
+
+    # 確認用
+    print(
+        "\n========== Reranking =========="
+    )
+
+    for rank, (
+        document,
+        score
+    ) in enumerate(
+        scored_documents,
+        start=1
+    ):
+
+        print(
+            f"\n--- Rerank {rank} ---"
+        )
+
+        print(
+            "Rerankスコア：",
+            round(score, 4)
+        )
+
+        print(
+            "文書番号：",
+            document.metadata.get(
+                "document_id"
+            )
+        )
+
+        print(
+            "資料名：",
+            document.metadata.get(
+                "title"
+            )
+        )
+
+        print(
+            "ページ：",
+            document.metadata.get(
+                "page_number"
+            )
+        )
+
+        print(
+            "内容："
+        )
+
+        print(
+            document.page_content
+        )
+
+    print(
+        "\n==============================="
+    )
+
+    return [
+        document
+        for document, score
+        in scored_documents[:top_k]
+    ]
+
+# ==============================
+# Hybrid Search
+# Vector Search + BM25
 # ==============================
 
 def search_documents(question):
 
     vector_db = get_vector_db()
 
-    results = vector_db.similarity_search(
-        question,
-        k=10
+    # ==========================
+    # Chromaから登録データ取得
+    # ==========================
+
+    stored_data = vector_db.get(
+        include=[
+            "documents",
+            "metadatas"
+        ]
     )
 
-    # 動作確認用
+    stored_documents = (
+        stored_data.get(
+            "documents",
+            []
+        )
+    )
+
+    stored_metadatas = (
+        stored_data.get(
+            "metadatas",
+            []
+        )
+    )
+
+    if not stored_documents:
+
+        return []
+
+    # ==========================
+    # 1. Vector Search
+    # ==========================
+
+    vector_results = (
+        vector_db.similarity_search(
+            question,
+            k=10
+        )
+    )
+
+    # ==========================
+    # 2. BM25
+    # ==========================
+
+    tokenized_corpus = [
+        tokenize_for_bm25(text)
+        for text in stored_documents
+    ]
+
+    bm25 = BM25Okapi(
+        tokenized_corpus
+    )
+
+    query_tokens = (
+        tokenize_for_bm25(
+            question
+        )
+    )
+
+    bm25_scores = (
+        bm25.get_scores(
+            query_tokens
+        )
+    )
+
+    # スコアが高い順に並べる
+    bm25_indexes = sorted(
+        range(
+            len(bm25_scores)
+        ),
+        key=lambda i:
+            bm25_scores[i],
+        reverse=True
+    )[:10]
+
+    # ==========================
+    # Documentへ変換
+    # ==========================
+
+    from langchain_core.documents import Document
+
+    bm25_results = []
+
+    for index in bm25_indexes:
+
+        # BM25スコアが0以下なら
+        # 関係する単語がないので除外
+        if bm25_scores[index] <= 0:
+            continue
+
+        document = Document(
+            page_content=(
+                stored_documents[
+                    index
+                ]
+            ),
+            metadata=(
+                stored_metadatas[
+                    index
+                ]
+                or {}
+            )
+        )
+
+        bm25_results.append(
+            document
+        )
+
+    # ==========================
+    # 3. RRFで検索結果を統合
+    # ==========================
+
+    rrf_scores = {}
+
+    document_map = {}
+
+    def create_document_key(
+        document
+    ):
+
+        return (
+            document.metadata.get(
+                "source_file",
+                ""
+            ),
+            document.metadata.get(
+                "page_number",
+                ""
+            ),
+            document.page_content
+        )
+
+    # Vector Searchの順位
+    for rank, document in enumerate(
+        vector_results,
+        start=1
+    ):
+
+        key = create_document_key(
+            document
+        )
+
+        document_map[key] = (
+            document
+        )
+
+        rrf_scores[key] = (
+            rrf_scores.get(
+                key,
+                0
+            )
+            + 1 / (60 + rank)
+        )
+
+    # BM25の順位
+    for rank, document in enumerate(
+        bm25_results,
+        start=1
+    ):
+
+        key = create_document_key(
+            document
+        )
+
+        document_map[key] = (
+            document
+        )
+
+        rrf_scores[key] = (
+            rrf_scores.get(
+                key,
+                0
+            )
+            + 1 / (60 + rank)
+        )
+
+    # ==========================
+    # RRFスコア順
+    # ==========================
+
+    sorted_keys = sorted(
+        rrf_scores,
+        key=lambda key:
+            rrf_scores[key],
+        reverse=True
+    )
+
+    # まず10件残す
+    results = [
+        document_map[key]
+        for key in sorted_keys[:10]
+    ]
+
+    # ==========================
+    # 動作確認
+    # ==========================
+
     print(
-        "\n========== 検索結果 =========="
+        "\n========== Hybrid Search =========="
+    )
+
+    print(
+        f"Vector Search：{len(vector_results)}件"
+    )
+
+    print(
+        f"BM25：{len(bm25_results)}件"
+    )
+
+    print(
+        f"統合後：{len(results)}件"
     )
 
     for i, document in enumerate(
@@ -237,8 +656,44 @@ def search_documents(question):
         start=1
     ):
 
+        key = create_document_key(
+            document
+        )
+
         print(
-            f"\n--- 検索結果 {i} ---"
+            f"\n--- Hybrid検索結果 {i} ---"
+        )
+
+        print(
+            "RRFスコア：",
+            round(
+                rrf_scores.get(
+                    key,
+                    0
+                ),
+                6
+            )
+        )
+
+        print(
+            "文書番号：",
+            document.metadata.get(
+                "document_id"
+            )
+        )
+
+        print(
+            "資料名：",
+            document.metadata.get(
+                "title"
+            )
+        )
+
+        print(
+            "カテゴリ：",
+            document.metadata.get(
+                "category"
+            )
         )
 
         print(
@@ -255,17 +710,30 @@ def search_documents(question):
             )
         )
 
-        print("内容：")
+        print(
+            "内容："
+        )
 
         print(
             document.page_content
         )
 
     print(
-        "\n=============================="
+        "\n==================================="
     )
 
-    return results
+# ==============================
+# 4. Reranking
+# ==============================
+
+    reranked_results = rerank_documents(
+        question,
+        results,
+        top_k=5
+    )
+
+    return reranked_results
+
 # ==============================
 # Gemini呼び出し
 # 制限時は別モデルへ切り替える
