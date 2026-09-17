@@ -16,10 +16,20 @@ from sentence_transformers import CrossEncoder
 # ==============================
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_DIR = os.path.dirname(BASE_DIR)
 
-ENV_PATH = os.path.join(PROJECT_DIR, ".env")
-CHROMA_DIR = os.path.join(BASE_DIR, "chroma_db")
+PROJECT_DIR = os.path.dirname(
+    os.path.dirname(BASE_DIR)
+)
+
+ENV_PATH = os.path.join(
+    PROJECT_DIR,
+    ".env"
+)
+
+CHROMA_DIR = os.path.join(
+    BASE_DIR,
+    "chroma_db"
+)
 
 load_dotenv(ENV_PATH)
 
@@ -37,7 +47,7 @@ embeddings = HuggingFaceEmbeddings(
 # ==============================
 
 reranker = CrossEncoder(
-    "cross-encoder/ms-marco-MiniLM-L6-v2"
+    "BAAI/bge-reranker-v2-m3"
 )
 
 # ==============================

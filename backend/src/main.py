@@ -12,7 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
-from rag import (
+from src.rag import (
     register_pdf,
     delete_pdf_from_db,
     generate_answer,
