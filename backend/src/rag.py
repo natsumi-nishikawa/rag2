@@ -444,49 +444,82 @@ def rerank_documents(
 # Vector Search + BM25
 # ==============================
 
-def search_documents(question):
+def search_documents(
+    question,
+    category=None
+):
 
     vector_db = get_vector_db()
 
     # ==========================
-    # Chromaから登録データ取得
+    # Chromaから登録データ取得 Metadata Filter
     # ==========================
 
-    stored_data = vector_db.get(
-        include=[
-            "documents",
-            "metadatas"
-        ]
-    )
+    if category:
 
-    stored_documents = (
-        stored_data.get(
-            "documents",
-            []
+        metadata_filter = {
+            "category": category
+        }
+
+        stored_data = vector_db.get(
+            where=metadata_filter,
+            include=[
+                "documents",
+                "metadatas"
+            ]
         )
-    )
 
-    stored_metadatas = (
-        stored_data.get(
-            "metadatas",
-            []
+    else:
+
+        metadata_filter = None
+
+        stored_data = vector_db.get(
+            include=[
+                "documents",
+                "metadatas"
+            ]
         )
+        
+    # ==========================
+    # 取得したデータを取り出す
+    # ==========================
+
+    stored_documents = stored_data.get(
+        "documents",
+        []
     )
 
+    stored_metadatas = stored_data.get(
+        "metadatas",
+        []
+    )
+
+    # 対象資料がなければ終了
     if not stored_documents:
-
         return []
 
     # ==========================
     # 1. Vector Search
     # ==========================
 
-    vector_results = (
-        vector_db.similarity_search(
-            question,
-            k=10
+    if metadata_filter:
+
+        vector_results = (
+            vector_db.similarity_search(
+                question,
+                k=10,
+                filter=metadata_filter
+            )
         )
-    )
+
+    else:
+
+        vector_results = (
+            vector_db.similarity_search(
+                question,
+                k=10
+            )
+        )
 
     # ==========================
     # 2. BM25
@@ -1071,27 +1104,12 @@ VMD 売場づくり 商品陳列 店舗レイアウト
 """
 
     documents = search_documents(
-        search_question
+        search_question,
+        category="vmd"
     )
 
-    # ==========================
-    # VMD資料だけに絞る
-    # ==========================
+    vmd_documents = documents
 
-    vmd_documents = []
-
-    for document in documents:
-
-        file_name = document.metadata.get(
-            "source_file",
-            ""
-        )
-
-        if "VMD" in file_name.upper():
-
-            vmd_documents.append(
-                document
-            )
 
     # ==========================
     # VMD資料がなければ提案しない

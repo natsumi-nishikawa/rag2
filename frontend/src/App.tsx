@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
+import { onAuthStateChanged, type User } from "firebase/auth";
 import "./App.css";
 import VmdLayout from "./VmdLayout";
+import Login from "./Login";
+import { auth } from "./firebase";
 
 type Document = {
   filename: string;
@@ -15,6 +18,22 @@ type Page = "question" | "documents" | "vmd";
 
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>("question");
+
+  // ============================
+  // ログイン
+  // ============================
+
+  const [user, setUser] = useState<User | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setAuthLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   // ============================
   // PDF
@@ -270,6 +289,14 @@ function App() {
   // ============================
   // 画面
   // ============================
+
+  if (authLoading) {
+    return <div>ログイン情報を確認しています...</div>;
+  }
+
+  if (!user) {
+    return <Login />;
+  }
 
   return (
     <div className="app-layout">
