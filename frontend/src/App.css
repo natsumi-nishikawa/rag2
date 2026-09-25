@@ -66,15 +66,27 @@ body {
 .sidebar-logo h1 {
   margin: 0;
 
-  font-size: 28px;
-  letter-spacing: 4px;
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 30px;
+  font-weight: 400;
+
+  letter-spacing: 7px;
+
+  color: #ffffff;
 }
 
 .sidebar-logo p {
-  margin: 8px 0 0;
+  margin: 10px 0 0;
 
-  font-size: 14px;
-  color: #c9c6c0;
+  font-size: 10px;
+
+  letter-spacing: 2px;
+
+  color: #aaa39a;
 }
 
 
@@ -94,35 +106,44 @@ body {
   width: 100%;
 
   border: none;
-  border-radius: 8px;
+  border-left: 2px solid transparent;
+  border-radius: 0;
 
   background: transparent;
-  color: #dedbd5;
 
-  padding: 14px 16px;
+  color: #c9c4bd;
 
-  font-size: 15px;
+  padding: 15px 16px;
+
+  font-size: 13px;
+  font-weight: 400;
+
+  letter-spacing: 0.5px;
+
   text-align: left;
 
   cursor: pointer;
 
-  transition:
-    background-color 0.2s,
-    color 0.2s;
+  transition: 0.2s;
 }
 
 .menu-button:hover {
-  background-color: #3d3a36;
-  color: white;
+  color: #ffffff;
+
+  background:
+    rgba(255, 255, 255, 0.05);
 }
 
 
 /* 現在選択しているメニュー */
 
 .menu-button.active {
-  background-color: #ffffff;
-  color: #292724;
-  font-weight: bold;
+  color: #ffffff;
+  background:
+    rgba(255, 255, 255, 0.07);
+  border-left:
+    2px solid #b9aa96;
+  font-weight: 600;
 }
 
 
@@ -367,28 +388,165 @@ body {
 
 
 /* ==============================
-   PDFアップロード
+   PDF登録エリア
 ============================== */
 
 .upload-box {
-  padding: 24px;
+  display: block;
 
-  background-color: #faf9f7;
+  width: 100%;
 
-  border: 1px dashed #c8c4bd;
-  border-radius: 10px;
+  padding: 30px;
 
+  background: #faf8f4;
+
+  border: 1px solid #ddd7ce;
+  border-top: 3px solid #b9aa96;
+
+  border-radius: 2px;
+}
+
+/* ==============================
+   PDFファイル選択
+============================== */
+
+.upload-box > .metadata-field:first-child {
+  margin-bottom: 28px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #e5dfd6;
+}
+
+.upload-box > .metadata-field:first-child label {
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #403c37;
+}
+
+.upload-box input[type="file"] {
+  width: 100%;
+  padding: 12px;
+  background: #ffffff;
+  border: 1px solid #d8d1c8;
+  color: #625d56;
+}
+
+.upload-box input[type="file"]::file-selector-button:hover {
+  background: #b9aa96;
+}
+
+.upload-box input[type="file"]::file-selector-button {
+  margin-right: 15px;
+  padding: 9px 15px;
+  border: none;
+  background: #e9e3da;
+  color: #393631;
+  font-size: 12px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+/* ==============================
+   Metadata入力
+============================== */
+
+.metadata-form {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 22px 28px;
+  width: 100%;
+}
+
+.metadata-field {
   display: flex;
-  align-items: center;
-  gap: 16px;
-
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
 }
 
-.upload-box .primary-button {
-  margin-top: 0;
+.metadata-field label {
+  color: #555049;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
 }
 
+/* ==============================
+   入力欄
+============================== */
+
+.metadata-field input:not([type="file"]),
+.metadata-field select {
+  width: 100%;
+  height: 43px;
+
+  padding: 0 12px;
+
+  border: 1px solid #d8d1c8;
+  border-radius: 2px;
+
+  background: #ffffff;
+
+  color: #332f2b;
+
+  font-size: 13px;
+
+  outline: none;
+
+  transition: 0.2s;
+}
+
+.metadata-field input:focus,
+.metadata-field select:focus {
+  border-color: #aa9983;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(185, 170, 150, 0.12);
+}
+
+/* ==============================
+   PDF登録ボタン
+============================== */
+
+.upload-box > .primary-button {
+  display: block;
+
+  min-width: 150px;
+
+  margin:
+    28px 0 0
+    auto;
+
+  padding:
+    13px 25px;
+
+  border-radius: 2px;
+}
+
+/* ==============================
+   スマホ
+============================== */
+
+@media (max-width: 700px) {
+
+  .upload-box {
+    padding: 22px 18px;
+  }
+
+  .metadata-form {
+    grid-template-columns: 1fr;
+
+    gap: 18px;
+  }
+
+  .upload-box > .primary-button {
+    width: 100%;
+
+    margin-top: 24px;
+  }
+}
 
 /* ==============================
    登録済み資料
@@ -529,4 +687,363 @@ body {
     align-items: flex-start;
     flex-direction: column;
   }
+}
+
+.login-user-area {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+
+  margin-bottom: 16px;
+  padding: 10px 14px;
+
+  color: #333;
+}
+
+.login-user-icon {
+  font-size: 24px;
+}
+
+.login-user-name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.login-user-role {
+  font-size: 12px;
+  color: #777;
+  margin-top: 2px;
+}
+
+.logout-button {
+  margin-left: 12px;
+  padding: 7px 14px;
+
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+
+  background: white;
+  color: #555;
+
+  font-size: 13px;
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.logout-button:hover {
+  background: #f3f4f6;
+  color: #222;
+}
+
+/* ==============================
+   LOGIN
+============================== */
+
+.login-page {
+  position: relative;
+
+  width: 100%;
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px;
+
+  /* 白い透かし + 背景画像 */
+  background-image:
+    linear-gradient(
+      rgba(247, 244, 238, 0.8),
+      rgba(247, 244, 238, 0.8)
+    ),
+    url("./assets/lumina-login.jpg");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  overflow: hidden;
+}
+
+/* ==============================
+   ログインカード
+============================== */
+
+.login-card {
+  position: relative;
+
+  width: 100%;
+  max-width: 400px;
+
+  padding: 42px 42px 34px;
+
+  background:
+    rgba(255, 255, 255, 0.78);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.65);
+
+  box-shadow:
+    0 20px 60px
+    rgba(35, 30, 25, 0.12);
+
+  backdrop-filter: blur(8px);
+
+  border-radius: 2px;
+}
+
+/* ==============================
+   ブランド
+============================== */
+
+.login-brand {
+  text-align: center;
+}
+
+.login-brand h1 {
+  margin: 8px 0 10px;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  color: #1d1c1a;
+
+  font-size: 38px;
+  font-weight: 400;
+
+  letter-spacing: 8px;
+}
+
+.login-brand-sub {
+  margin: 0;
+
+  color: #8b8175;
+
+  font-size: 9px;
+
+  letter-spacing: 3px;
+}
+
+.login-brand-jp {
+  margin: 0;
+
+  color: #777067;
+
+  font-size: 12px;
+
+  letter-spacing: 1px;
+}
+
+/* ==============================
+   区切り
+============================== */
+
+.login-divider {
+  width: 40px;
+  height: 1px;
+
+  margin: 27px auto;
+
+  background: #b9aa96;
+}
+
+/* ==============================
+   LOGINタイトル
+============================== */
+
+.login-card h2 {
+  margin: 0;
+
+  color: #292724;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  letter-spacing: 4px;
+
+  text-align: center;
+}
+
+.login-description {
+  margin:
+    10px 0
+    28px;
+
+  color: #8a837a;
+
+  font-size: 12px;
+
+  text-align: center;
+}
+
+/* ==============================
+   入力
+============================== */
+
+.login-field {
+  margin-bottom: 20px;
+}
+
+.login-field label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: #5e5952;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  letter-spacing: 0.8px;
+}
+
+.login-field input {
+  width: 100%;
+
+  padding:
+    13px 14px;
+
+  border:
+    1px solid #d8d1c8;
+
+  border-radius: 0;
+
+  background:
+    rgba(255, 255, 255, 0.8);
+
+  color: #292724;
+
+  font-size: 14px;
+
+  outline: none;
+
+  transition: 0.2s;
+}
+
+.login-field input:focus {
+  border-color: #a99a86;
+
+  background: white;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(185, 170, 150, 0.12);
+}
+
+.login-field input::placeholder {
+  color: #aaa39a;
+}
+
+/* ==============================
+   エラー
+============================== */
+
+.login-error {
+  margin:
+    5px 0
+    15px;
+
+  padding: 10px;
+
+  background:
+    #f8eeee;
+
+  color: #9b4944;
+
+  font-size: 12px;
+
+  text-align: center;
+}
+
+/* ==============================
+   LOGINボタン
+============================== */
+
+.login-button {
+  width: 100%;
+
+  margin-top: 8px;
+
+  padding: 14px;
+
+  border:
+    1px solid #1d1c1a;
+
+  border-radius: 0;
+
+  background: #1d1c1a;
+
+  color: white;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  letter-spacing: 3px;
+
+  cursor: pointer;
+
+  transition: 0.25s;
+}
+
+.login-button:hover {
+  background: #b9aa96;
+
+  border-color: #b9aa96;
+
+  color: #1d1c1a;
+}
+
+.login-button:disabled {
+  opacity: 0.5;
+
+  cursor: not-allowed;
+}
+
+/* ==============================
+   フッター
+============================== */
+
+.login-footer {
+  margin:
+    30px 0 0;
+
+  color: #aaa298;
+
+  font-size: 8px;
+
+  letter-spacing: 2px;
+
+  text-align: center;
+}
+
+/* ==============================
+   LOGIN スマホ
+============================== */
+
+@media (max-width: 600px) {
+
+  .login-page {
+    padding: 20px;
+  }
+
+  .login-card {
+    max-width: 100%;
+
+    padding:
+      38px 27px
+      30px;
+  }
+
+  .login-brand h1 {
+    font-size: 31px;
+
+    letter-spacing: 7px;
+  }
+
 }

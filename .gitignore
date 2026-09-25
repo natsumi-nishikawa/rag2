@@ -27,5 +27,6 @@ dist-ssr
 .env
 backend/uploads/
 backend/chroma_db/
+backend/firebase-service-account.json
 __pycache__/
 *.pyc

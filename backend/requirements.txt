@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+python-dotenv
+firebase-admin
+langchain-community
+langchain-text-splitters
+langchain-huggingface
+langchain-google-genai
+chromadb
+sentence-transformers
+rank-bm25
+pypdf

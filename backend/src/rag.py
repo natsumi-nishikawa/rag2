@@ -1008,8 +1008,6 @@ def reset_database():
             "Chromaデータを削除しました"
         )
 
-import json
-
 
 # ==============================
 # VMD提案生成
