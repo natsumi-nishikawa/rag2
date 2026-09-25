@@ -46,9 +46,7 @@ embeddings = HuggingFaceEmbeddings(
 # Reranker
 # ==============================
 
-reranker = CrossEncoder(
-    "BAAI/bge-reranker-v2-m3"
-)
+reranker = None
 
 # ==============================
 # Chroma取得
@@ -353,6 +351,22 @@ def rerank_documents(
         for document in documents
     ]
 
+    # Rerankerが無効の場合は、
+    # RRFで並んだ検索結果をそのまま返す
+    if reranker is None:
+        print(
+            "\n========== Reranking =========="
+        )
+        print(
+            "Rerankerは無効です。RRFの順位を使用します。"
+        )
+        print(
+            "==============================="
+        )
+
+        return documents[:top_k]
+
+
     # CrossEncoderで関連度を評価
     scores = reranker.predict(
         pairs
@@ -372,13 +386,11 @@ def rerank_documents(
             )
         )
 
-    # 関連度が高い順
     scored_documents.sort(
         key=lambda item: item[1],
         reverse=True
     )
 
-    # 確認用
     print(
         "\n========== Reranking =========="
     )
